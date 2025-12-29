@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        VENV = ".venv"
+    tools {
+        python 'Python39'
     }
 
     stages {
@@ -10,25 +10,26 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
+                    credentialsId: 'github-pat',
                     url: 'https://github.com/pavan1613/selenium-ci-cd.git'
             }
         }
 
         stage('Create Virtual Environment') {
             steps {
-                bat 'python -m venv %VENV%'
+                bat 'python -m venv .venv'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat '%VENV%\\Scripts\\pip install -r requirements.txt'
+                bat '.venv\\Scripts\\pip install -r requirements.txt'
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                bat '%VENV%\\Scripts\\pytest --html=reports/report.html --self-contained-html'
+                bat '.venv\\Scripts\\pytest --html=reports/report.html --self-contained-html'
             }
         }
     }
@@ -36,7 +37,7 @@ pipeline {
     post {
         always {
             publishHTML(target: [
-                allowMissing: false,
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',
