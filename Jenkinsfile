@@ -25,7 +25,7 @@ pipeline {
 
         stage('Run Selenium Tests') {
             steps {
-                bat '.venv\\Scripts\\pytest --html=reports/report.html --self-contained-html'
+                bat '.venv\\Scripts\\pytest -v -s --html=reports/report.html --self-contained-html'
             }
         }
     }
